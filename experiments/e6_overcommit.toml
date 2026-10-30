@@ -1,0 +1,44 @@
+# The gateway reserves prompt + max_tokens up front. Decodes grow into that
+# reservation gradually and shared prefixes are stored once, so on long-output
+# and shared-prefix traffic much of the budget sits unused (e5: KV peak 65% /
+# 28%, throughput -12% / -11%). Overcommitting the budget trades that back
+# against the risk the reservation removed: preemption, and, once the engine's
+# own queue fills again, its head-of-line blocking.
+name = "e6_overcommit"
+seed = 0
+
+[server]
+args = ["--max-model-len", "16384", "--disable-uvicorn-access-log"]
+
+[[variant]]
+name = "fcfs"
+
+[[variant]]
+name = "gw_b1.0"
+gateway = ["--aging", "1000", "--budget-frac", "1.0"]
+
+[[variant]]
+name = "gw_b1.5"
+gateway = ["--aging", "1000", "--budget-frac", "1.5"]
+
+[[variant]]
+name = "gw_b2.0"
+gateway = ["--aging", "1000", "--budget-frac", "2.0"]
+
+[[workload]]
+name = "mixed"
+classes = [
+  { name = "short", input = [192, 320], output = [96, 160], weight = 0.85 },
+  { name = "long_input", input = [6144, 8192], output = [96, 160], weight = 0.15 },
+]
+loads = [{ rate = 7.5, requests = 480 }]
+
+[[workload]]
+name = "long_output"
+classes = [{ name = "long_output", input = [192, 320], output = [768, 1280] }]
+loads = [{ rate = 4.5, requests = 300 }]
+
+[[workload]]
+name = "prefix_shared"
+classes = [{ name = "prefix_shared", input = [2304, 2560], output = [96, 160], shared_prefix = 2048, num_prefixes = 4 }]
+loads = [{ rate = 12.0, requests = 480 }]

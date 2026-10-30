@@ -1,0 +1,63 @@
+{
+  "experiment": "e6_overcommit",
+  "variant": "gw_b1.5",
+  "server_args": [
+    "--max-model-len",
+    "16384",
+    "--disable-uvicorn-access-log"
+  ],
+  "gateway_args": [
+    "--aging",
+    "1000",
+    "--budget-frac",
+    "1.5"
+  ],
+  "priority": false,
+  "model": "Qwen3-8B",
+  "vllm": "0.32.0",
+  "torch": "2.13.0",
+  "workload": {
+    "name": "mixed",
+    "classes": [
+      {
+        "name": "short",
+        "input": [
+          192,
+          320
+        ],
+        "output": [
+          96,
+          160
+        ],
+        "weight": 0.85
+      },
+      {
+        "name": "long_input",
+        "input": [
+          6144,
+          8192
+        ],
+        "output": [
+          96,
+          160
+        ],
+        "weight": 0.15
+      }
+    ],
+    "loads": [
+      {
+        "rate": 7.5,
+        "requests": 480
+      }
+    ]
+  },
+  "load": {
+    "rate": 7.5,
+    "requests": 480
+  },
+  "seed": 0,
+  "started": "2026-10-25T07:34:02",
+  "gpu": "NVIDIA GeForce RTX 5090, 32607 MiB, 580.178.04",
+  "compute_apps": "2953446, VLLM::EngineCore, 30168 MiB",
+  "wall_s": 73.59452435292769
+}

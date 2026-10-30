@@ -1,0 +1,55 @@
+{
+  "experiment": "e4_admission",
+  "variant": "gw_sjf",
+  "server_args": [
+    "--max-model-len",
+    "16384",
+    "--disable-uvicorn-access-log"
+  ],
+  "gateway_args": [
+    "--aging",
+    "1000"
+  ],
+  "priority": false,
+  "model": "Qwen3-8B",
+  "vllm": "0.32.0",
+  "torch": "2.13.0",
+  "workload": {
+    "name": "mixed",
+    "classes": [
+      {
+        "name": "short",
+        "input": [
+          192,
+          320
+        ],
+        "output": [
+          96,
+          160
+        ],
+        "weight": 0.85
+      },
+      {
+        "name": "long_input",
+        "input": [
+          6144,
+          8192
+        ],
+        "output": [
+          96,
+          160
+        ],
+        "weight": 0.15
+      }
+    ]
+  },
+  "load": {
+    "rate": 7.5,
+    "requests": 480
+  },
+  "seed": 0,
+  "started": "2026-10-25T06:04:48",
+  "gpu": "NVIDIA GeForce RTX 5090, 32607 MiB, 580.178.04",
+  "compute_apps": "2930307, VLLM::EngineCore, 30092 MiB",
+  "wall_s": 74.61752745194826
+}

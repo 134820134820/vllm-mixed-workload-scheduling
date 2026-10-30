@@ -1,0 +1,40 @@
+{
+  "experiment": "e2_prefix_caching",
+  "variant": "apc_off",
+  "server_args": [
+    "--max-model-len",
+    "16384",
+    "--disable-uvicorn-access-log",
+    "--no-enable-prefix-caching"
+  ],
+  "model": "Qwen3-8B",
+  "vllm": "0.32.0",
+  "torch": "2.13.0",
+  "workload": {
+    "name": "prefix_shared",
+    "classes": [
+      {
+        "name": "prefix_shared",
+        "input": [
+          2304,
+          2560
+        ],
+        "output": [
+          96,
+          160
+        ],
+        "shared_prefix": 2048,
+        "num_prefixes": 4
+      }
+    ]
+  },
+  "load": {
+    "concurrency": 16,
+    "requests": 320
+  },
+  "seed": 0,
+  "started": "2026-10-25T04:07:55",
+  "gpu": "NVIDIA GeForce RTX 5090, 32607 MiB, 580.178.04",
+  "compute_apps": "2904161, VLLM::EngineCore, 30168 MiB",
+  "wall_s": 95.68951569497585
+}

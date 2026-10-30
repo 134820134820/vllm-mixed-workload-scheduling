@@ -1,0 +1,29 @@
+# Automatic prefix caching on vs off, on shared and unique prefixes. The
+# unique-prefix pair shows the cost of the cache bookkeeping when nothing hits.
+name = "e2_prefix_caching"
+seed = 0
+loads = [
+  { concurrency = 1, requests = 40 },
+  { concurrency = 16, requests = 320 },
+  { concurrency = 64, requests = 640 },
+  { concurrency = 256, requests = 1280 },
+]
+
+[server]
+args = ["--max-model-len", "16384", "--disable-uvicorn-access-log"]
+
+[[variant]]
+name = "apc_on"
+args = ["--enable-prefix-caching"]
+
+[[variant]]
+name = "apc_off"
+args = ["--no-enable-prefix-caching"]
+
+[[workload]]
+name = "prefix_shared"
+classes = [{ name = "prefix_shared", input = [2304, 2560], output = [96, 160], shared_prefix = 2048, num_prefixes = 4 }]
+
+[[workload]]
+name = "prefix_unique"
+classes = [{ name = "prefix_unique", input = [2304, 2560], output = [96, 160] }]

@@ -1,0 +1,37 @@
+# Where the gateway helps and where it hurts, beyond the mixed workload.
+#   long_output   -- past capacity, vLLM admits more decodes than the KV cache
+#                    can hold and preempts (e1: 2784 preemptions at c256); the
+#                    gateway reserves prompt + max_tokens up front instead.
+#   prefix_shared -- the gateway charges each request its full prompt, but
+#                    with prefix caching the shared 2048 tokens are stored
+#                    once, so the gateway under-admits (expected failure case).
+name = "e5_gateway_limits"
+seed = 0
+
+[server]
+args = ["--max-model-len", "16384", "--disable-uvicorn-access-log"]
+
+[[variant]]
+name = "fcfs"
+
+[[variant]]
+name = "gw_sjf"
+gateway = ["--aging", "1000"]
+
+[[workload]]
+name = "long_output"    # capacity ~3.4 req/s (e1)
+classes = [{ name = "long_output", input = [192, 320], output = [768, 1280] }]
+loads = [
+  { rate = 2.5, requests = 300 },
+  { rate = 3.5, requests = 300 },
+  { rate = 4.5, requests = 300 },
+]
+
+[[workload]]
+name = "prefix_shared"  # capacity ~11 req/s with prefix caching (e2)
+classes = [{ name = "prefix_shared", input = [2304, 2560], output = [96, 160], shared_prefix = 2048, num_prefixes = 4 }]
+loads = [
+  { rate = 4.0, requests = 480 },
+  { rate = 8.0, requests = 480 },
+  { rate = 12.0, requests = 480 },
+]

@@ -1,0 +1,45 @@
+# Baseline: vLLM defaults for this GPU, closed-loop concurrency sweep over the
+# basic request shapes. Lengths are ranges (+-25%) so closed-loop clients do
+# not fall into lockstep waves.
+name = "e1_baseline"
+seed = 0
+loads = [
+  { concurrency = 1, requests = 40 },
+  { concurrency = 4, requests = 120 },
+  { concurrency = 16, requests = 320 },
+  { concurrency = 64, requests = 640 },
+  { concurrency = 256, requests = 1280 },
+]
+
+[server]
+args = ["--max-model-len", "16384", "--disable-uvicorn-access-log"]
+
+[[variant]]
+name = "default"
+
+[[workload]]
+name = "short"          # chat turn
+classes = [{ name = "short", input = [192, 320], output = [96, 160] }]
+
+[[workload]]
+name = "long_input"     # RAG / summarization
+classes = [{ name = "long_input", input = [6144, 8192], output = [96, 160] }]
+
+[[workload]]
+name = "long_output"    # generation
+classes = [{ name = "long_output", input = [192, 320], output = [768, 1280] }]
+
+[[workload]]
+name = "mixed"          # mostly chat, some long documents
+classes = [
+  { name = "short", input = [192, 320], output = [96, 160], weight = 0.85 },
+  { name = "long_input", input = [6144, 8192], output = [96, 160], weight = 0.15 },
+]
+
+[[workload]]
+name = "prefix_shared"  # 2048-token system prompt, 4 distinct ones in rotation
+classes = [{ name = "prefix_shared", input = [2304, 2560], output = [96, 160], shared_prefix = 2048, num_prefixes = 4 }]
+
+[[workload]]
+name = "prefix_unique"  # same lengths, nothing shared
+classes = [{ name = "prefix_unique", input = [2304, 2560], output = [96, 160] }]

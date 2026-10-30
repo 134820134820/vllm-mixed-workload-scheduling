@@ -1,0 +1,39 @@
+# Per-step token budget (chunked prefill) on the mixed workload, open loop.
+# A long prompt is prefilled in chunks of at most this many tokens, sharing
+# each step with every running decode: a small budget protects decode
+# latency (TPOT, inter-token stalls) but stretches long prompts' TTFT; a
+# large one does the opposite. vLLM 0.32's default on a 32 GB GPU is 2048.
+name = "e3_prefill_budget"
+seed = 0
+loads = [
+  { rate = 1.5, requests = 360 },
+  { rate = 3.0, requests = 480 },
+  { rate = 4.5, requests = 480 },
+  { rate = 6.0, requests = 480 },
+]
+
+[server]
+args = ["--max-model-len", "16384", "--disable-uvicorn-access-log"]
+
+[[variant]]
+name = "mbt512"
+args = ["--max-num-batched-tokens", "512"]
+
+[[variant]]
+name = "mbt2048"
+args = ["--max-num-batched-tokens", "2048"]
+
+[[variant]]
+name = "mbt8192"
+args = ["--max-num-batched-tokens", "8192"]
+
+[[variant]]
+name = "mbt16384"
+args = ["--max-num-batched-tokens", "16384"]
+
+[[workload]]
+name = "mixed"
+classes = [
+  { name = "short", input = [192, 320], output = [96, 160], weight = 0.85 },
+  { name = "long_input", input = [6144, 8192], output = [96, 160], weight = 0.15 },
+]

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="300" viewBox="0 0 860 300" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#0b0b0b">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#52514e"/>
+    </marker>
+  </defs>
+  <rect width="860" height="300" fill="#fcfcfb"/>
+
+  <!-- Legend -->
+  <g font-size="12" fill="#52514e">
+    <rect x="30" y="18" width="14" height="14" rx="3" fill="#f2f1ed" stroke="#b9b8b3"/>
+    <text x="52" y="29">vLLM / hardware, unchanged</text>
+    <rect x="240" y="18" width="14" height="14" rx="3" fill="#e6effa" stroke="#2a78d6"/>
+    <text x="262" y="29">this repo</text>
+  </g>
+
+  <!-- Request path -->
+  <path d="M120,92 C120,58 595,58 595,90" fill="none" stroke="#52514e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrow)"/>
+  <text x="358" y="56" font-size="11" fill="#52514e" text-anchor="middle">direct, without the gateway (baselines)</text>
+
+  <rect x="30" y="92" width="180" height="80" rx="6" fill="#e6effa" stroke="#2a78d6"/>
+  <text x="46" y="117" font-weight="600">bench/client.py</text>
+  <text x="46" y="138" fill="#52514e">synthetic load</text>
+  <text x="46" y="157" fill="#52514e">per-token timing</text>
+
+  <rect x="270" y="92" width="200" height="80" rx="6" fill="#e6effa" stroke="#2a78d6"/>
+  <text x="286" y="117" font-weight="600">gateway/ (optional)</text>
+  <text x="286" y="138" fill="#52514e">KV-budget admission</text>
+  <text x="286" y="157" fill="#52514e">shortest cost first + aging</text>
+
+  <rect x="510" y="92" width="170" height="80" rx="6" fill="#f2f1ed" stroke="#b9b8b3"/>
+  <text x="526" y="117" font-weight="600">vLLM server</text>
+  <text x="526" y="138" fill="#52514e">OpenAI API</text>
+  <text x="526" y="157" fill="#52514e">chunked prefill</text>
+
+  <rect x="720" y="92" width="110" height="80" rx="6" fill="#f2f1ed" stroke="#b9b8b3"/>
+  <text x="736" y="117" font-weight="600">RTX 5090</text>
+  <text x="736" y="138" fill="#52514e">Qwen3-8B</text>
+  <text x="736" y="157" fill="#52514e">BF16</text>
+
+  <g stroke="#52514e" stroke-width="1.5" marker-end="url(#arrow)">
+    <line x1="210" y1="132" x2="268" y2="132"/>
+    <line x1="470" y1="132" x2="508" y2="132"/>
+    <line x1="680" y1="132" x2="718" y2="132"/>
+  </g>
+  <text x="239" y="124" font-size="11" fill="#52514e" text-anchor="middle">HTTP/SSE</text>
+
+  <!-- Harness -->
+  <rect x="30" y="206" width="300" height="70" rx="6" fill="#e6effa" stroke="#2a78d6"/>
+  <text x="46" y="230" font-weight="600">bench/monitor.py</text>
+  <text x="46" y="250" font-size="12" fill="#52514e">every 0.5 s: vLLM /metrics, gateway /stats,</text>
+  <text x="46" y="266" font-size="12" fill="#52514e">nvidia-smi, process CPU</text>
+
+  <rect x="350" y="206" width="270" height="70" rx="6" fill="#e6effa" stroke="#2a78d6"/>
+  <text x="366" y="230" font-weight="600">bench/run.py</text>
+  <text x="366" y="250" font-size="12" fill="#52514e">starts the servers, runs each variant ×</text>
+  <text x="366" y="266" font-size="12" fill="#52514e">workload × load, saves the results</text>
+
+  <rect x="640" y="206" width="190" height="70" rx="6" fill="#e6effa" stroke="#2a78d6"/>
+  <text x="656" y="230" font-weight="600">bench/report.py</text>
+  <text x="656" y="250" font-size="12" fill="#52514e">summary tables</text>
+  <text x="656" y="266" font-size="12" fill="#52514e">and figures</text>
+</svg>

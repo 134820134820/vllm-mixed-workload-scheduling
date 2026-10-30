@@ -1,0 +1,21 @@
+# Functional check of the harness on a small model; numbers are not results.
+name = "smoke"
+loads = [{ concurrency = 4, requests = 20 }, { rate = 8.0, requests = 30 }]
+
+[server]
+args = ["--kv-cache-memory-bytes", "2G", "--gpu-memory-utilization", "0.3", "--max-model-len", "4096",
+        "--disable-uvicorn-access-log"]
+
+[[variant]]
+name = "default"
+
+[[workload]]
+name = "mixed"
+classes = [
+  { name = "short", input = [100, 300], output = 64, weight = 3 },
+  { name = "long", input = 3000, output = 16, shared_prefix = 2048 },
+]
+
+[[variant]]
+name = "gateway"
+gateway = ["--aging", "1000"]

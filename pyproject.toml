@@ -1,0 +1,22 @@
+[project]
+name = "vllm-mixed-workload-scheduling"
+version = "0.1.0"
+description = "Benchmark harness, head-of-line blocking analysis and a KV-aware admission gateway for vLLM"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "vllm==0.32.0",
+    "aiohttp",
+    "psutil",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools]
+packages = ["bench", "gateway"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
